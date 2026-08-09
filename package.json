@@ -1,0 +1,27 @@
+{
+  "name": "todo_api_express",
+  "version": "1.0.0",
+  "description": "A simple TODO API built with Express",
+  "main": "app.js",
+  "scripts": {
+    "dev": "tsx --watch src/app.js",
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "start": "node dist/app.js"
+  },
+  "keywords": [],
+  "author": "DiEmmal",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.2.0",
+    "rimraf": "^6.1.3",
+    "tsx": "^4.23.11",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "env-var": "^7.5.0",
+    "express": "^5.2.1"
+  }
+}
