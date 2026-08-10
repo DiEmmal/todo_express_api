@@ -15,9 +15,11 @@ export class Server {
         this.routes = options.routes;
     }
 
-    public async start() {
+    public start() {
 
-        console.log('Server has been started');
+        //* Middleware
+        this.app.use(express.json());
+        this.app.use(express.urlencoded());
 
         //*Routes
         this.app.use(this.routes);

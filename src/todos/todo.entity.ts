@@ -1,5 +1,6 @@
 interface CreateTodo {
     task: string;
+    user: string;
     timestamp?: Date;
 }
 
@@ -9,10 +10,12 @@ export class Todo {
     task: string;
     id: number;
     timestamp: Date;
+    user: string;
 
     constructor(options: CreateTodo) {
         this.task = options.task;
         this.timestamp = options.timestamp ?? new Date();
         this.id = globalTodoID++;
+        this.user = options.user;
     };
 }

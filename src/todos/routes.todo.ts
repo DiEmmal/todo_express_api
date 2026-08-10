@@ -7,10 +7,19 @@ export class TodoRoutes {
 
         const router = Router();
 
-        router.get('/', TodoController.getTodos);
-        router.get('/:id', TodoController.getTodoById);
+        //* CRUD
+        // Create
+        router.post('/', TodoController.createTodo);
+        // Read
+        router.get('/', TodoController.readTodos);
+        router.get('/:id', TodoController.readTodoById);
+        // Update
+        router.put('/', TodoController.updateTodo);
+        // Delete
+        router.delete('/', TodoController.deleteAllTodos);
+        router.delete('/:id', TodoController.deleteTodoById);
 
         return router;
-    }
+    };
 
 };
