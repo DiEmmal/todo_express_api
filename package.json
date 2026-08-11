@@ -4,7 +4,7 @@
   "description": "A simple TODO API built with Express",
   "main": "app.js",
   "scripts": {
-    "dev": "tsx --watch src/app.js",
+    "dev": "docker compose up -d && tsx --watch src/app.ts",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "start": "node dist/app.js"
   },
@@ -22,6 +22,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "env-var": "^7.5.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.9.1"
   }
 }
