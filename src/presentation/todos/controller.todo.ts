@@ -18,15 +18,15 @@ export class TodoController {
 
         await this.repository.createTodo(newTodo);
 
-        return res.status(200).json({ message: 'New Todo!', newTodo });
+        return res.status(201).json({ message: 'New Todo!', newTodo });
     };
 
     public readTodos = async (req: Request, res: Response) => {
-        const todos = await this.repository.getTodos();
+        const todos: Todo[] = await this.repository.getTodos();
 
-        if (todos.length === 0) return res.status(400).json({ message: `The database has not any todo` });
+        if (todos.length === 0) return res.status(200).json([{ message: `The database has not any todo` }]);
 
-        return res.status(200).json(todos.map(todo => Todo.fromObject(todo)));
+        return res.status(200).json(todos);
 
     };
 
@@ -35,7 +35,7 @@ export class TodoController {
         if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });
 
         const todo = await this.repository.getTodoById(id);
-        if (!todo) return res.status(404).json({ error: `todo with id: ${id} not found` });
+        if (!todo) return res.status(404).json([{ error: `todo with id: ${id} not found` }]);
 
         return res.status(200).json(todo);
 
@@ -56,17 +56,17 @@ export class TodoController {
 
     public deleteTodoById = async (req: Request, res: Response) => {
         const id = req.params.id;
-        if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });;
+        if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
 
         const todos = await this.repository.deleteTodoById(id);
-        if (!todos) return res.status(404).json({ error: `todo with id: ${id} not found` });
+        if (!todos) return res.status(404).json([{ error: `todo with id: ${id} not found` }]);
 
         return res.status(200).json(todos);
     };
 
     public deleteAllTodos = async (req: Request, res: Response) => {
         await this.repository.deleteTodos();
-        return res.status(200).json({ message: `All todos has been deleted` });
+        return res.sendStatus(204);
     };
 
 }

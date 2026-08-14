@@ -25,7 +25,6 @@ export class MongoTodoRepository implements TodoRepository {
 
         await TodoModel.create({ id, task, timestamp, user });
 
-        console.log('Mongo created new Todo!');
     };
 
     async updateTodo(options: UpdateTodo): Promise<Todo | null> {

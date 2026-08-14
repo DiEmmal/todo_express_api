@@ -1,4 +1,4 @@
-import type { Todo, CreateTodo, UpdateTodo } from "../entities/todo.entity.js";
+import type { Todo, UpdateTodo } from "../entities/todo.entity.js";
 
 export abstract class TodoRepository {
 
