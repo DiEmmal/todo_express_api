@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const todoSchema = new mongoose.Schema({
-    task:{
+    title: {
+        type: String,
+        required: true,
+    },
+    task: {
         type: String,
         required: true,
     },
@@ -9,13 +13,17 @@ const todoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    timestamp: {
+    createdAt: {
         type: Date,
         default: Date.now
     },
     id: {
         type: String,
         required: true
+    },
+    completedAt: {
+        type: Date,
+        default: null
     },
 });
 

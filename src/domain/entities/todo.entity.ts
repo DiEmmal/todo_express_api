@@ -1,36 +1,37 @@
 import { randomUUID } from 'crypto';
 
 export interface CreateTodo {
+    title: string;
     task: string;
     user: string;
-    timestamp?: Date;
-};
-
-export interface UpdateTodo {
-    task: string;
-    timestamp: Date;
-    id: string;
+    createdAt?: Date;
+    completedAt?: Date | null;
+    id?: string;
 };
 
 export class Todo {
+    title: string;
     task: string;
-    timestamp: Date;
+    readonly createdAt: Date;
+    completedAt: Date | null;
     user: string;
-    id: string;
+    readonly id: string;
+
 
     constructor(options: CreateTodo) {
         this.task = options.task;
-        this.timestamp = options.timestamp ?? new Date();
+        this.createdAt = options.createdAt ? options.createdAt : new Date();
         this.user = options.user;
-        this.id = randomUUID();
+        this.id = options.id ? options.id : randomUUID();
+        this.title = options.title;
+        this.completedAt = options.completedAt ? options.completedAt : null;
     };
 
     static fromObject(obj: any): Todo {
 
-        const { task, id, timestamp, user } = obj;
+        const { task, id, createdAt, completedAt, user, title } = obj;
 
-        const newTodo = new Todo({ task, timestamp, user })
-        newTodo.id = id;
+        const newTodo = new Todo({ task, user, title, id, createdAt, completedAt });
 
         return newTodo;
     };

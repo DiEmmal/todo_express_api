@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { Todo } from "../../domain/entities/todo.entity.js";
 import type { TodoRepository } from "../../domain/repositories/todo.repository.js";
+import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
 
 export class TodoController {
 
@@ -9,14 +10,19 @@ export class TodoController {
     ) { }
 
     public createTodo = async (req: Request, res: Response) => {
-        const { task, user } = req.body;
+        const createDto = CreateTodoDto.create(req.body);
+        const { dto, error } = createDto;
 
-        if (!task) return res.status(400).json({ error: 'Missing task' });
-        if (!user) return res.status(400).json({ error: 'Missing user' });
+        if (createDto.error) return res.status(400).json({ error });
 
-        const newTodo = new Todo({ task: `${task}`, user: `${user}` });
+        let newTodo;
+        if (dto) newTodo = new Todo({
+            task: dto.task,
+            title: dto.title,
+            user: dto.user,
+        });
 
-        await this.repository.createTodo(newTodo);
+        if(newTodo) await this.repository.createTodo(newTodo);
 
         return res.status(201).json({ message: 'New Todo!', newTodo });
     };
@@ -42,13 +48,16 @@ export class TodoController {
     };
 
     public updateTodo = async (req: Request, res: Response) => {
-
         const id = req.params.id;
-        const { task } = req.body;
-        if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });
-        if (!task) return res.status(400).json({ error: `Missing task` });
 
-        const updatedTodo = await this.repository.updateTodo({ id, task, timestamp: new Date() });
+        const updateTodoDto = UpdateTodoDto.create({ ...req.body, id });
+        const { dto, error } = updateTodoDto;
+
+        if (error) return res.status(400).json({ error });
+
+        let updatedTodo;
+        if (dto) updatedTodo = await this.repository.updateTodo(dto);
+
         if (!updatedTodo) return res.status(404).json({ error: `todo with id: ${id} not found` });
 
         return res.status(200).json({ message: `Updated todo with id: ${id}`, todo: updatedTodo });

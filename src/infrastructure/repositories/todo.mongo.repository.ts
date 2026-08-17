@@ -1,4 +1,5 @@
-import { Todo, type UpdateTodo } from "../../domain/entities/todo.entity.js";
+import type { UpdateTodoDto } from "../../domain/dtos/index.js";
+import { Todo } from "../../domain/entities/todo.entity.js";
 import type { TodoRepository } from "../../domain/repositories/todo.repository.js";
 import { TodoModel } from "../data/mongo/index.js";
 
@@ -21,16 +22,19 @@ export class MongoTodoRepository implements TodoRepository {
     };
 
     async createTodo(todo: Todo): Promise<void> {
-        const { id, task, timestamp, user } = todo;
+        const { id, task, createdAt, user, title } = todo;
 
-        await TodoModel.create({ id, task, timestamp, user });
-
+        await TodoModel.create({ id, task, createdAt, user, title });
     };
 
-    async updateTodo(options: UpdateTodo): Promise<Todo | null> {
-        const { id, task, timestamp } = options;
+    async updateTodo(dto: UpdateTodoDto): Promise<Todo | null> {
+        const { id } = dto;
 
-        const todo = await TodoModel.findOneAndUpdate({ id }, { task, timestamp }, { returnDocument: 'after' });
+        const todo = await TodoModel.findOneAndUpdate(
+            { id },
+            dto.values,
+            { returnDocument: 'after' }
+        );
 
         if (!todo) return null;
 
