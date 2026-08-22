@@ -18,4 +18,3 @@ Simple TODO API built with Express, TypeScript, MongoDB, and a small clean archi
 - `GET /api/todos/:id`
 - `PUT /api/todos/:id`
 - `DELETE /api/todos/:id`
-- `DELETE /api/todos`

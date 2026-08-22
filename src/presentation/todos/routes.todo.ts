@@ -21,7 +21,6 @@ export class TodoRoutes {
         // Update
         router.put('/:id', todoController.updateTodo);
         // Delete
-        router.delete('/', todoController.deleteAllTodos);
         router.delete('/:id', todoController.deleteTodoById);
 
         return router;

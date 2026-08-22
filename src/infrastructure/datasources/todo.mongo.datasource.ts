@@ -1,5 +1,5 @@
 import type { TodoDatasource } from "../../domain/datasources/todo.datasource.js";
-import type { UpdateTodoDto } from "../../domain/dtos/index.js";
+import type { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
 import { TodoEntity } from "../../domain/entities/todo.entity.js";
 import { TodoModel } from "../data/mongo/index.js";
 
@@ -14,19 +14,28 @@ export class TodoMongoDatasource implements TodoDatasource {
     async getTodoById(id: string): Promise<TodoEntity> {
         const todo = await TodoModel.findOne({ id });
 
-        if (!todo) throw (`Todo with id ${id} not found`);
+        if (!todo) throw new Error(`Todo with id ${id} not found`);
 
         return TodoEntity.fromObject(todo);
     };
 
-    async createTodo(todo: TodoEntity): Promise<void> {
-        const { id, task, createdAt, user, title } = todo;
+    async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {
+        const { task, user, title } = dto.values;
+        const todoEntity = new TodoEntity({
+            task,
+            title,
+            user,
+        });
 
-        await TodoModel.create({ id, task, createdAt, user, title });
+        const todo = await TodoModel.create(todoEntity);
+
+        return TodoEntity.fromObject(todo);
     };
 
     async updateTodo(dto: UpdateTodoDto): Promise<TodoEntity> {
         const { id } = dto;
+
+        await this.getTodoById(id);
 
         const todo = await TodoModel.findOneAndUpdate(
             { id },
@@ -34,13 +43,7 @@ export class TodoMongoDatasource implements TodoDatasource {
             { returnDocument: 'after' }
         );
 
-        if (!todo) throw (`Todo with id ${id} not found`)
-
         return TodoEntity.fromObject(todo);
-    }
-
-    async deleteTodos(): Promise<void> {
-        await TodoModel.deleteMany();
     };
 
     async deleteTodoById(id: string): Promise<TodoEntity> {

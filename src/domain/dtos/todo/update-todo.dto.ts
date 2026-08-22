@@ -23,6 +23,9 @@ export class UpdateTodoDto {
 
         if (!id || typeof id !== 'string') return { error: 'Invalid ID property' };
 
+        if(title === '') return { error: 'Invalid title property' };
+        if(task === '') return { error: 'Invalid task property' };
+
         return { dto: new UpdateTodoDto(id, task, title, completed) };
 
     };

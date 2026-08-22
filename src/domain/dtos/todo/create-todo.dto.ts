@@ -17,9 +17,9 @@ export class CreateTodoDto {
 
         const { title, task, user } = props;
 
-        if (!user || typeof user !== 'string') return { error: 'Invalid user property' };
-        if (!title || typeof title !== 'string') return { error: 'Invalid title property' };
-        if (!task || typeof task !== 'string') return { error: 'Invalid task property' };
+        if (!user || typeof user !== 'string' || user === '') return { error: 'Invalid user property' };
+        if (!title || typeof title !== 'string' || title === '') return { error: 'Invalid title property' };
+        if (!task || typeof task !== 'string' || task === '') return { error: 'Invalid task property' };
 
         return { dto: new CreateTodoDto(task, title, user) };
 
