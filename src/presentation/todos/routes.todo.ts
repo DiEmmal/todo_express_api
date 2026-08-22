@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { TodoController } from "./controller.todo.js";
-import { MongoTodoRepository } from "../../infrastructure/repositories/todo.mongo.repository.js";
+import { TodoMongoRepository } from "../../infrastructure/repositories/todo.mongo.repository.js";
+import { TodoMongoDatasource } from "../../infrastructure/datasources/todo.mongo.datasource.js";
 
 export class TodoRoutes {
 
     static get Routes() {
 
         const router = Router();
-        const TodoRepository = new MongoTodoRepository();
+        const todoDatasource = new TodoMongoDatasource();
+        const TodoRepository = new TodoMongoRepository(todoDatasource);
         const todoController = new TodoController(TodoRepository);
 
         //* CRUD

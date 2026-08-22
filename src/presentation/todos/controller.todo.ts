@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { Todo } from "../../domain/entities/todo.entity.js";
+import { TodoEntity } from "../../domain/entities/todo.entity.js";
 import type { TodoRepository } from "../../domain/repositories/todo.repository.js";
 import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
 
@@ -16,7 +16,7 @@ export class TodoController {
         if (createDto.error) return res.status(400).json({ error });
 
         let newTodo;
-        if (dto) newTodo = new Todo({
+        if (dto) newTodo = new TodoEntity({
             task: dto.task,
             title: dto.title,
             user: dto.user,
@@ -28,7 +28,7 @@ export class TodoController {
     };
 
     public readTodos = async (req: Request, res: Response) => {
-        const todos: Todo[] = await this.repository.getTodos();
+        const todos: TodoEntity[] = await this.repository.getTodos();
 
         if (todos.length === 0) return res.status(200).json([{ message: `The database has not any todo` }]);
 

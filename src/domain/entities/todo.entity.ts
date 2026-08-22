@@ -9,7 +9,7 @@ export interface CreateTodo {
     id?: string;
 };
 
-export class Todo {
+export class TodoEntity {
     title: string;
     task: string;
     readonly createdAt: Date;
@@ -27,11 +27,11 @@ export class Todo {
         this.completedAt = options.completedAt ? options.completedAt : null;
     };
 
-    static fromObject(obj: any): Todo {
+    static fromObject(obj: any): TodoEntity {
 
         const { task, id, createdAt, completedAt, user, title } = obj;
 
-        const newTodo = new Todo({ task, user, title, id, createdAt, completedAt });
+        const newTodo = new TodoEntity({ task, user, title, id, createdAt, completedAt });
 
         return newTodo;
     };

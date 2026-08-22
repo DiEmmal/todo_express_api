@@ -11,9 +11,10 @@ export class UpdateTodoDto {
 
         if (this.task) obj.task = this.task;
         if (this.title) obj.title = this.title;
-        this.completed ? obj.completedAt = new Date() : obj.completedAt = null;
+        if (this.completed === true) obj.completedAt = new Date();
+        if (this.completed === false) obj.completedAt = null;
 
-        return obj
+        return obj;
     }
 
     static create(props: { [key: string]: any }): { error?: string, dto?: UpdateTodoDto } {
