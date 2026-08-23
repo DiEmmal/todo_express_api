@@ -1,6 +1,7 @@
 import type { TodoDatasource } from "../../domain/datasources/todo.datasource.js";
 import type { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
 import { TodoEntity } from "../../domain/entities/todo.entity.js";
+import { CustomHTTPError } from "../../domain/errors/custom-http.error.js";
 import { TodoModel } from "../data/mongo/index.js";
 
 export class TodoMongoDatasource implements TodoDatasource {
@@ -12,9 +13,10 @@ export class TodoMongoDatasource implements TodoDatasource {
     };
 
     async getTodoById(id: string): Promise<TodoEntity> {
+        
         const todo = await TodoModel.findOne({ id });
 
-        if (!todo) throw new Error(`Todo with id ${id} not found`);
+        if (!todo) throw new CustomHTTPError(`Todo with id ${id} not found`, 404);
 
         return TodoEntity.fromObject(todo);
     };

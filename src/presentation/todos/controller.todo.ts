@@ -2,12 +2,20 @@ import { type Request, type Response } from "express";
 import type { TodoRepository } from "../../domain/repositories/todo.repository.js";
 import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
 import { CreateTodo, DeleteById, GetAll, GetById, UpdateTodoById } from "../../domain/use-cases/index.js";
+import { CustomHTTPError } from "../../domain/errors/custom-http.error.js";
 
 export class TodoController {
 
     constructor(
         private readonly repository: TodoRepository,
     ) { };
+
+    private handleError(error: any, res: Response) {
+        if (error instanceof CustomHTTPError) {
+            return res.status(error.statusCode).json({ error: error.message });
+        };
+        return res.status(500).json({ error });
+    };
 
     public createTodo = async (req: Request, res: Response) => {
 
@@ -19,7 +27,7 @@ export class TodoController {
         new CreateTodo(this.repository)
             .execute(dto!)
             .then(newTodo => res.status(201).json({ message: 'New Todo!', newTodo }))
-            .catch(error => res.status(404).json({ error }));
+            .catch(error => this.handleError(error, res));
     };
 
     public readTodos = async (req: Request, res: Response) => {
@@ -27,18 +35,21 @@ export class TodoController {
         new GetAll(this.repository)
             .execute()
             .then(todos => res.status(200).json({ todos }))
-            .catch(error => res.status(404).json({ error }));
+            .catch(error => this.handleError(error, res));
 
     };
 
     public readTodoById = async (req: Request, res: Response) => {
         const id = req.params.id;
-        if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });
+
+        if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
+
+        if(id.length !== 24) return res.status(400).json([{ error: `Not valid ID` }]);;
 
         new GetById(this.repository)
             .execute(id)
             .then(todo => res.status(200).json({ todo }))
-            .catch(error => res.status(404).json({ error }));
+            .catch(error => this.handleError(error, res));
 
     };
 
@@ -53,7 +64,7 @@ export class TodoController {
         new UpdateTodoById(this.repository)
             .execute(dto!)
             .then(todo => res.status(200).json({ todo }))
-            .catch(error => res.status(404).json({ error }));
+            .catch(error => this.handleError(error, res));
 
     };
 
@@ -61,10 +72,12 @@ export class TodoController {
         const id = req.params.id;
         if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
 
+        if(id.length !== 24) return res.status(400).json([{ error: `Not valid ID` }]);;
+
         new DeleteById(this.repository)
             .execute(id)
             .then(todo => res.status(200).json({ todo }))
-            .catch(error => res.status(404).json({ error }));
+            .catch(error => this.handleError(error, res));
     };
 
 }

@@ -21,10 +21,11 @@ export class UpdateTodoDto {
 
         const { title, task, id, completed } = props;
 
-        if (!id || typeof id !== 'string') return { error: 'Invalid ID property' };
+        if (!id || typeof id !== 'string') return { error: 'Not valid id' };
+        if(id.length < 24) return { error: 'Not valid id' };
 
-        if(title === '') return { error: 'Invalid title property' };
-        if(task === '') return { error: 'Invalid task property' };
+        if(title === '') return { error: 'Not valid title' };
+        if(task === '') return { error: 'Not valid task' };
 
         return { dto: new UpdateTodoDto(id, task, title, completed) };
 
