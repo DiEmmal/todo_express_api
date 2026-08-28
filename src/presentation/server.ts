@@ -7,9 +7,10 @@ interface StartServerOptions {
 }
 
 export class Server {
-    private app = express();
+    public app = express();
     private readonly port: number;
     private readonly routes: Router;
+    public serverListener?: any;
 
     constructor(options: StartServerOptions) {
         this.port = options.port;
@@ -26,8 +27,12 @@ export class Server {
         //*Routes
         this.app.use(this.routes);
 
-        this.app.listen(this.port, () => console.log(`Server listening on port: ${this.port}`));
+        this.serverListener = this.app.listen(this.port, () => console.log(`Server listening on port: ${this.port}`))
 
+    };
+
+    public close() {
+        this.serverListener.close();
     };
 
 }

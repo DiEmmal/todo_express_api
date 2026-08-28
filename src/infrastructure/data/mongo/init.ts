@@ -5,7 +5,7 @@ interface ConnectionOptions {
     dbName: string,
 }
 
-export class MongoDataBase {
+export class MongoDatabase {
 
     static async connect(options: ConnectionOptions) {
         const {mongoURL, dbName} = options;
@@ -20,7 +20,12 @@ export class MongoDataBase {
             return true;
         } catch (error) {
             throw error;
-        }
-    }
+
+        };
+    };
+
+    static async disconnect() {
+        await mongoose.disconnect();
+    };
 
 }

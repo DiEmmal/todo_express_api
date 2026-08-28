@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { getUUID } from "../../config/index.js";
 
 export interface CreateTodo {
     title: string;
@@ -22,7 +22,7 @@ export class TodoEntity {
         this.task = options.task;
         this.createdAt = options.createdAt ? options.createdAt : new Date();
         this.user = options.user;
-        this.id = options.id ? options.id : randomUUID();
+        this.id = options.id ? options.id : getUUID();
         this.title = options.title;
         this.completedAt = options.completedAt ? options.completedAt : null;
     };

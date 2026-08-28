@@ -44,7 +44,7 @@ export class TodoController {
 
         if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
 
-        if(id.length !== 24) return res.status(400).json([{ error: `Not valid ID` }]);;
+        if(id.length !== 36) return res.status(400).json({ error: `Not valid ID` });;
 
         new GetById(this.repository)
             .execute(id)
@@ -70,9 +70,9 @@ export class TodoController {
 
     public deleteTodoById = async (req: Request, res: Response) => {
         const id = req.params.id;
-        if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
+        if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });;
 
-        if(id.length !== 24) return res.status(400).json([{ error: `Not valid ID` }]);;
+        if(id.length !== 36) return res.status(400).json({ error: `Not valid ID` });;
 
         new DeleteById(this.repository)
             .execute(id)
