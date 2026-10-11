@@ -34,7 +34,7 @@ export class TodoController {
 
         new GetAll(this.repository)
             .execute()
-            .then(todos => res.status(200).json({ todos }))
+            .then(todos => res.status(200).json( todos.length === 0 ? { message: 'No todos found' } : { todos } ))
             .catch(error => this.handleError(error, res));
 
     };

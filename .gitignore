@@ -9,3 +9,5 @@ dist/
 /mongo-test
 
 /coverage/
+
+atlas-credentials.env

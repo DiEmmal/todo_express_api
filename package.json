@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "docker compose up -d && tsx --watch src/app.ts",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "start": "docker compose up -d && node dist/app.js",
+    "start": "node dist/app.js",
     "docker": "docker compose up -d",
     "docker:test": "docker compose --env-file .env.test -f docker-compose.test.yml up -d",
     "test": "npm run docker:test && vitest"
