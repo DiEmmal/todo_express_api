@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import compression from 'compression';
+import cors from 'cors';
 
 interface StartServerOptions {
     port: number;
@@ -23,6 +24,7 @@ export class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded());
         this.app.use(compression());
+        this.app.use(cors());
 
         //*Routes
         this.app.use(this.routes);
