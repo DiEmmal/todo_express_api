@@ -16,7 +16,7 @@ export class TodoMongoDatasource implements TodoDatasource {
         
         const todo = await TodoModel.findOne({ id });
 
-        if (!todo) throw new CustomHTTPError(`Todo with id ${id} not found`, 404);
+        if (!todo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
         return TodoEntity.fromObject(todo);
     };
@@ -37,7 +37,9 @@ export class TodoMongoDatasource implements TodoDatasource {
     async updateTodo(dto: UpdateTodoDto): Promise<TodoEntity> {
         const { id } = dto;
 
-        await this.getTodoById(id);
+        const existingTodo = await this.getTodoById(id);
+
+        if(!existingTodo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
         const todo = await TodoModel.findOneAndUpdate(
             { id },
@@ -50,6 +52,8 @@ export class TodoMongoDatasource implements TodoDatasource {
 
     async deleteTodoById(id: string): Promise<TodoEntity> {
         const todo = await this.getTodoById(id);
+
+        if(!todo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
         await TodoModel.deleteOne({ id });
 

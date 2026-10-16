@@ -24,6 +24,10 @@ export class UpdateTodoDto {
         if (!id || typeof id !== 'string') return { error: 'Not valid id' };
         if(id.length < 24) return { error: 'Not valid id' };
 
+        if(title && typeof title !== 'string') return { error: 'Not valid title' };
+        if(title && title.length > 30) return { error: 'Title must be less than 30 characters' };
+        if(task && typeof task !== 'string') return { error: 'Not valid task' };
+        if(task && task.length > 500) return { error: 'Task must be less than 500 characters' };
         if(title === '') return { error: 'Not valid title' };
         if(task === '') return { error: 'Not valid task' };
 

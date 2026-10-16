@@ -1,4 +1,5 @@
 import { getUUID } from "../../config/index.js";
+import { CustomHTTPError } from "../errors/custom-http.error.js";
 
 export interface CreateTodo {
     title: string;
@@ -32,6 +33,14 @@ export class TodoEntity {
         const { task, id, createdAt, completedAt, user, title } = obj;
 
         const newTodo = new TodoEntity({ task, user, title, id, createdAt, completedAt });
+
+        if (
+            !task
+            || !user
+            || !title
+            || !id
+            || !createdAt
+        ) throw CustomHTTPError.InternalServerError("Error fetching data from the database");
 
         return newTodo;
     };
