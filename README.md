@@ -12,6 +12,30 @@ Simple TODO API built with Express, TypeScript, MongoDB, and a small clean archi
 - `npm run build`: compiles TypeScript into `dist`.
 - `npm start`: runs the compiled app from `dist`.
 
+## For DB Development
+
+You can use either of the following options for MongoDB:
+
+### MongoDB Atlas
+
+Create a free cluster in [MongoDB Atlas](https://www.mongodb.com/atlas/database) and set its connection string in `MONGO_URL` in your `.env` file:
+
+```env
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster-url>/?retryWrites=true&w=majority
+MONGO_DB_NAME=todo_db
+```
+
+### MongoDB with Docker
+
+To run MongoDB locally with Docker, make sure Docker is installed and start the development environment:
+
+```bash
+npm run docker:up
+npm run dev
+```
+
+This command starts MongoDB using Docker Compose and runs the API in watch mode. The default local connection is configured in `.env` with `MONGO_URL`.
+
 ## Endpoints
 - `POST /api/todos`
 - `GET /api/todos`
