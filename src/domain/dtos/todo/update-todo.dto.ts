@@ -22,7 +22,7 @@ export class UpdateTodoDto {
         const { title, task, id, completed } = props;
 
         if (!id || typeof id !== 'string') return { error: 'Not valid id' };
-        if(id.length < 24) return { error: 'Not valid id' };
+        if(id.length !== 36) return { error: 'Not valid id' };
 
         if(title && typeof title !== 'string') return { error: 'Not valid title' };
         if(title && title.length > 30) return { error: 'Title must be less than 30 characters' };

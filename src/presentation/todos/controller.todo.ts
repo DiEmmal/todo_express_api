@@ -14,7 +14,7 @@ export class TodoController {
         if (error instanceof CustomHTTPError) {
             return res.status(error.statusCode).json({ error: error.message });
         };
-        return res.status(500).json({ error });
+        return res.status(500).json({ error: 'Internal Server Error' });
     };
 
     public createTodo = async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ export class TodoController {
 
         new CreateTodo(this.repository)
             .execute(dto!)
-            .then(newTodo => res.status(201).json({ message: 'New Todo!', newTodo }))
+            .then(newTodo => res.status(201).json({ todo: newTodo, error: null }))
             .catch(error => this.handleError(error, res));
     };
 
@@ -34,7 +34,7 @@ export class TodoController {
 
         new GetAll(this.repository)
             .execute()
-            .then(todos => res.status(200).json( todos.length === 0 ? { todos: [] } : { todos } ))
+            .then(todos => res.status(200).json({ error: null, todos: todos ?? [] }))
             .catch(error => this.handleError(error, res));
 
     };
@@ -48,7 +48,7 @@ export class TodoController {
 
         new GetById(this.repository)
             .execute(id)
-            .then(todo => res.status(200).json({ todo }))
+            .then(todo => res.status(200).json({ todo, error: null }))
             .catch(error => this.handleError(error, res));
 
     };
@@ -63,20 +63,21 @@ export class TodoController {
 
         new UpdateTodoById(this.repository)
             .execute(dto!)
-            .then(todo => res.status(200).json({ todo }))
+            .then(todo => res.status(200).json({ todo, error: null }))
             .catch(error => this.handleError(error, res));
 
     };
 
     public deleteTodoById = async (req: Request, res: Response) => {
         const id = req.params.id;
+
         if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });;
 
         if(id.length !== 36) return res.status(400).json({ error: `Not valid ID` });;
 
         new DeleteById(this.repository)
             .execute(id)
-            .then(todo => res.status(200).json({ todo }))
+            .then(todo => res.status(200).json({ todo, error: null }))
             .catch(error => this.handleError(error, res));
     };
 

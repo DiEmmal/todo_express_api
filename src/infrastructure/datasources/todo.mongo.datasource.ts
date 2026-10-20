@@ -22,16 +22,27 @@ export class TodoMongoDatasource implements TodoDatasource {
     };
 
     async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {
+
         const { task, user, title } = dto.values;
+        
         const todoEntity = new TodoEntity({
             task,
             title,
             user,
         });
 
-        const todo = await TodoModel.create(todoEntity);
+        try {    
+    
+            const todo = await TodoModel.create(todoEntity);
 
-        return TodoEntity.fromObject(todo);
+            return TodoEntity.fromObject(todo);
+
+        } catch (error) {
+
+            throw CustomHTTPError.InternalServerError('Error creating todo');
+
+        }
+        
     };
 
     async updateTodo(dto: UpdateTodoDto): Promise<TodoEntity> {
@@ -52,8 +63,6 @@ export class TodoMongoDatasource implements TodoDatasource {
 
     async deleteTodoById(id: string): Promise<TodoEntity> {
         const todo = await this.getTodoById(id);
-
-        if(!todo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
         await TodoModel.deleteOne({ id });
 
