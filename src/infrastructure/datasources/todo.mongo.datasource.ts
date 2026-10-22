@@ -1,19 +1,44 @@
 import type { TodoDatasource } from "../../domain/datasources/todo.datasource.js";
 import type { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
+import type { PaginationDto } from "../../domain/dtos/shared/pagination.dto.js";
 import { TodoEntity } from "../../domain/entities/todo.entity.js";
 import { CustomHTTPError } from "../../domain/errors/custom-http.error.js";
+import type { GetTodosResponse } from "../../domain/interfaces/get-todos-response.interface.js";
 import { TodoModel } from "../data/mongo/index.js";
+
+
 
 export class TodoMongoDatasource implements TodoDatasource {
 
-    async getTodos(): Promise<TodoEntity[]> {
-        const todos = (await TodoModel.find()).map(todo => TodoEntity.fromObject(todo));
+    async getTodos(dto: PaginationDto): Promise<GetTodosResponse> {
 
-        return todos;
+        const { limit, page } = dto;
+
+        try {
+            const [total, todos] = await Promise.all([
+                TodoModel.countDocuments(),
+                TodoModel.find()
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .sort({ createdAt: -1 })
+            ])
+
+            return {
+                todos: todos.map(todo => TodoEntity.fromObject(todo)),
+                page,
+                limit,
+                total
+            };
+
+        }
+        catch (error) {
+            throw CustomHTTPError.InternalServerError('Error fetching todos');
+        }
+
     };
 
     async getTodoById(id: string): Promise<TodoEntity> {
-        
+
         const todo = await TodoModel.findOne({ id });
 
         if (!todo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
@@ -24,15 +49,15 @@ export class TodoMongoDatasource implements TodoDatasource {
     async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {
 
         const { task, user, title } = dto.values;
-        
+
         const todoEntity = new TodoEntity({
             task,
             title,
             user,
         });
 
-        try {    
-    
+        try {
+
             const todo = await TodoModel.create(todoEntity);
 
             return TodoEntity.fromObject(todo);
@@ -42,7 +67,7 @@ export class TodoMongoDatasource implements TodoDatasource {
             throw CustomHTTPError.InternalServerError('Error creating todo');
 
         }
-        
+
     };
 
     async updateTodo(dto: UpdateTodoDto): Promise<TodoEntity> {
@@ -50,7 +75,7 @@ export class TodoMongoDatasource implements TodoDatasource {
 
         const existingTodo = await this.getTodoById(id);
 
-        if(!existingTodo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
+        if (!existingTodo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
         const todo = await TodoModel.findOneAndUpdate(
             { id },
@@ -67,7 +92,7 @@ export class TodoMongoDatasource implements TodoDatasource {
         await TodoModel.deleteOne({ id });
 
         return TodoEntity.fromObject(todo);
-        
+
     };
 
 };

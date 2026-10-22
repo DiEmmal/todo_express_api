@@ -1,15 +1,16 @@
-import type { TodoEntity } from "../../entities/todo.entity.js";
+import type { PaginationDto } from "../../dtos/shared/pagination.dto.js";
+import type { GetTodosResponse } from "../../interfaces/get-todos-response.interface.js";
 import type { TodoRepository } from "../../repositories/todo.repository.js";
 
 interface GetAllUseCase {
-    execute(): Promise<TodoEntity[]>;
+    execute(dto: PaginationDto): Promise<GetTodosResponse>;
 };
 
 export class GetAll implements GetAllUseCase {
     constructor(
         private readonly repository: TodoRepository,
     ) { };
-    async execute(): Promise<TodoEntity[]> {
-        return await this.repository.getTodos();
+    async execute(dto: PaginationDto): Promise<GetTodosResponse> {
+        return this.repository.getTodos(dto);
     };
 };
