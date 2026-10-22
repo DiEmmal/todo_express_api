@@ -11,27 +11,31 @@ export class TodoController {
         private readonly repository: TodoRepository,
     ) { };
 
-    private handleError(error: any, res: Response) {
+    private handleError(error: unknown, res: Response) {
         if (error instanceof CustomHTTPError) {
             return res.status(error.statusCode).json({ error: error.message });
         };
         return res.status(500).json({ error: 'Internal Server Error' });
     };
 
-    public createTodo = async (req: Request, res: Response) => {
+    private isValidId(id: unknown): id is string {
+        return typeof id === 'string' && id.length === 36;
+    };
+
+    public createTodo = (req: Request, res: Response) => {
 
         const createDto = CreateTodoDto.create(req.body);
         const { dto, error } = createDto;
 
-        if (createDto.error) return res.status(400).json({ error });
+        if (error) return res.status(400).json({ error });
 
         new CreateTodo(this.repository)
             .execute(dto!)
-            .then(newTodo => res.status(201).json({ todo: newTodo, error: null }))
+            .then(newTodo => res.status(201).json({ todo: newTodo, message: 'Todo created successfully' }))
             .catch(error => this.handleError(error, res));
     };
 
-    public getTodos = async (req: Request, res: Response) => {
+    public getTodos = (req: Request, res: Response) => {
         const paginationDto = PaginationDto.create(req.query);
         const { dto, error } = paginationDto;
 
@@ -40,31 +44,31 @@ export class TodoController {
         new GetAll(this.repository)
             .execute(dto!)
             .then(data => res.status(200).json({
-                error: null, todos: data?.todos ?? [], pagination: {
+                todos: data.todos,
+                pagination: {
                     page: data.page,
                     limit: data.limit,
                     total: data.total
-                }
+                },
+                message: 'Todos fetched successfully'
             }))
             .catch(error => this.handleError(error, res));
 
     };
 
-    public readTodoById = async (req: Request, res: Response) => {
+    public readTodoById = (req: Request, res: Response) => {
         const id = req.params.id;
 
-        if (typeof id !== 'string') return res.status(400).json([{ error: `Not valid ID` }]);;
-
-        if (id.length !== 36) return res.status(400).json({ error: `Not valid ID` });;
+        if (!this.isValidId(id)) return res.status(400).json({ error: 'Not valid ID' });
 
         new GetById(this.repository)
             .execute(id)
-            .then(todo => res.status(200).json({ todo, error: null }))
+            .then(todo => res.status(200).json({ todo, message: 'Todo fetched successfully' }))
             .catch(error => this.handleError(error, res));
 
     };
 
-    public updateTodo = async (req: Request, res: Response) => {
+    public updateTodo = (req: Request, res: Response) => {
         const id = req.params.id;
 
         const updateTodoDto = UpdateTodoDto.create({ ...req.body, id });
@@ -74,21 +78,19 @@ export class TodoController {
 
         new UpdateTodoById(this.repository)
             .execute(dto!)
-            .then(todo => res.status(200).json({ todo, error: null }))
+            .then(todo => res.status(200).json({ todo, message: 'Todo updated successfully' }))
             .catch(error => this.handleError(error, res));
 
     };
 
-    public deleteTodoById = async (req: Request, res: Response) => {
+    public deleteTodoById = (req: Request, res: Response) => {
         const id = req.params.id;
 
-        if (typeof id !== 'string') return res.status(400).json({ error: `Not valid ID` });;
-
-        if (id.length !== 36) return res.status(400).json({ error: `Not valid ID` });;
+        if (!this.isValidId(id)) return res.status(400).json({ error: 'Not valid ID' });
 
         new DeleteById(this.repository)
             .execute(id)
-            .then(todo => res.status(200).json({ todo, error: null }))
+            .then(todo => res.status(200).json({ todo, message: 'Todo deleted successfully' }))
             .catch(error => this.handleError(error, res));
     };
 
