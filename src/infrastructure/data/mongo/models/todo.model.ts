@@ -25,6 +25,10 @@ const todoSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    hasBeenEdited: {
+        type: Boolean,
+        default: false
+    }
 });
 
 export const TodoModel = mongoose.model('Todo', todoSchema);

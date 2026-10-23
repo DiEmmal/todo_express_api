@@ -76,17 +76,25 @@ export class TodoMongoDatasource implements TodoDatasource {
     async updateTodo(dto: UpdateTodoDto): Promise<TodoEntity> {
         const { id } = dto;
 
-        const existingTodo = await this.getTodoById(id);
+        try {
+            const existingTodo = await this.getTodoById(id);
 
-        if (!existingTodo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
+            if (!existingTodo) throw CustomHTTPError.NotFoundError(`Todo with id ${id} not found`);
 
-        const todo = await TodoModel.findOneAndUpdate(
-            { id },
-            dto.values,
-            { returnDocument: 'after' }
-        );
+            const todo = await TodoModel.findOneAndUpdate(
+                { id },
+                { ...dto.values, hasBeenEdited: true },
+                { returnDocument: 'after' }
+            );
 
-        return TodoEntity.fromObject(todo);
+            return TodoEntity.fromObject(todo);
+
+        } catch (error) {
+
+            throw CustomHTTPError.InternalServerError('Error updating todo');
+
+        }
+        
     };
 
     async deleteTodoById(id: string): Promise<TodoEntity> {

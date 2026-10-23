@@ -8,6 +8,7 @@ export interface CreateTodo {
     createdAt?: Date;
     completedAt?: Date | null;
     id?: string;
+    hasBeenEdited?: boolean;
 };
 
 export class TodoEntity {
@@ -17,6 +18,7 @@ export class TodoEntity {
     completedAt: Date | null;
     user: string;
     readonly id: string;
+    hasBeenEdited: boolean = false;
 
 
     constructor(options: CreateTodo) {
@@ -26,13 +28,14 @@ export class TodoEntity {
         this.id = options.id ? options.id : getUUID();
         this.title = options.title;
         this.completedAt = options.completedAt ? options.completedAt : null;
+        this.hasBeenEdited = options.hasBeenEdited ? options.hasBeenEdited : false;
     };
 
     static fromObject(obj: any): TodoEntity {
 
-        const { task, id, createdAt, completedAt, user, title } = obj;
+        const { task, id, createdAt, completedAt, user, title, hasBeenEdited } = obj;
 
-        const newTodo = new TodoEntity({ task, user, title, id, createdAt, completedAt });
+        const newTodo = new TodoEntity({ task, user, title, id, createdAt, completedAt, hasBeenEdited });
 
         if (
             !task
