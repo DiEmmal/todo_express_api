@@ -5,4 +5,7 @@ export interface GetTodosResponse {
     page: number;
     limit: number;
     total: number;
+    hasNextPage?: boolean;
+    hasPrevPage?: boolean;
+    totalPages?: number;
 }

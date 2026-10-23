@@ -27,7 +27,10 @@ export class TodoMongoDatasource implements TodoDatasource {
                 todos: todos.map(todo => TodoEntity.fromObject(todo)),
                 page,
                 limit,
-                total
+                total,
+                hasNextPage: page * limit < total,
+                hasPrevPage: page > 1,
+                totalPages: Math.ceil(total / limit)
             };
 
         }

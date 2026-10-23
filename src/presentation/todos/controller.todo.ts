@@ -48,7 +48,12 @@ export class TodoController {
                 pagination: {
                     page: data.page,
                     limit: data.limit,
-                    total: data.total
+                    total: data.total,
+                    hasNextPage: data.hasNextPage,
+                    hasPrevPage: data.hasPrevPage,
+                    totalPages: data.totalPages,
+                    nextPage: data.hasNextPage ? '/api/todos?page=' + (data.page + 1) + '&limit=' + data.limit : null,
+                    prevPage: data.hasPrevPage ? '/api/todos?page=' + (data.page - 1) + '&limit=' + data.limit : null,
                 },
                 message: 'Todos fetched successfully'
             }))
