@@ -65,7 +65,7 @@ describe('routes / todos', () => {
 
         const response = await sendTodo(todo1);
 
-        const todoID = response.body.newTodo.id
+        const todoID = response.body.todo.id
 
         const { body } = await request(testServer.app)
             .get(`/api/todos/${todoID}`)
@@ -73,6 +73,7 @@ describe('routes / todos', () => {
         expect(body.todo).toEqual({
             completedAt: null,
             createdAt: expect.any(String),
+            hasBeenEdited: false,
             id: expect.any(String),
             task: todo1.task,
             title: todo1.title,
@@ -111,11 +112,12 @@ describe('routes / todos', () => {
             .send(todo1)
             .expect(201)
 
-        expect(body.newTodo).toEqual({
+        expect(body.todo).toEqual({
             ...todo1,
             id: expect.any(String),
             createdAt: expect.any(String),
-            completedAt: null
+            completedAt: null,
+            hasBeenEdited: false
         });
 
     });
@@ -134,7 +136,7 @@ describe('routes / todos', () => {
     it('put - /api/todos/:id should update a todo and return 200', async () => {
 
         const response = await sendTodo(todo1);
-        const todoID = response.body.newTodo.id;
+        const todoID = response.body.todo.id;
 
         const { body } = await request(testServer.app)
             .put(`/api/todos/${todoID}`)
@@ -147,7 +149,8 @@ describe('routes / todos', () => {
             task: todo1.task,
             user: todo1.user,
             createdAt: expect.any(String),
-            completedAt: expect.any(String)
+            completedAt: expect.any(String),
+            hasBeenEdited: true
         });
 
     });
@@ -155,7 +158,7 @@ describe('routes / todos', () => {
     it('put - /api/todos/:id should return 400', async () => {
 
         const response = await sendTodo(todo1);
-        const todoID = response.body.newTodo.id;
+        const todoID = response.body.todo.id;
 
         const { body } = await request(testServer.app)
             .put(`/api/todos/${todoID}`)
@@ -180,7 +183,7 @@ describe('routes / todos', () => {
     it('delete - /api/todos/:id should delete a todo', async () => {
 
         const response = await sendTodo(todo1);
-        const todoID = response.body.newTodo.id;
+        const todoID = response.body.todo.id;
 
         const { body } = await request(testServer.app)
             .delete(`/api/todos/${todoID}`)
@@ -190,7 +193,8 @@ describe('routes / todos', () => {
             ...todo1,
             id: todoID,
             createdAt: expect.any(String),
-            completedAt: null
+            completedAt: null,
+            hasBeenEdited: false
         });
 
         await request(testServer.app)

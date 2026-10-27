@@ -90,6 +90,7 @@ export class TodoMongoDatasource implements TodoDatasource {
             return TodoEntity.fromObject(todo);
 
         } catch (error) {
+            if (error instanceof CustomHTTPError) throw error;
 
             throw CustomHTTPError.InternalServerError('Error updating todo');
 
