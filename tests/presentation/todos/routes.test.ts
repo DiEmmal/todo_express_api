@@ -46,8 +46,6 @@ describe('routes / todos', () => {
         .send(todo);
     };
 
-    const fakeId = 'a'.repeat(36);
-
     it('get - /api/todos should return all todos and status code 200', async () => {
 
         await sendTodo(todo1);
@@ -61,48 +59,31 @@ describe('routes / todos', () => {
 
     });
 
-    it('get - /api/todos/:id should return a todo and status code 200', async () => {
+    it('get - /api/todos/user should return only todos created by the requested user', async () => {
 
-        const response = await sendTodo(todo1);
-
-        const todoID = response.body.todo.id
+        await sendTodo(todo1);
+        await sendTodo(todo2);
 
         const { body } = await request(testServer.app)
-            .get(`/api/todos/${todoID}`)
+            .get('/api/todos/user')
+            .query({ user: todo1.user })
+            .expect(200);
 
-        expect(body.todo).toEqual({
-            completedAt: null,
-            createdAt: expect.any(String),
-            hasBeenEdited: false,
-            id: expect.any(String),
-            task: todo1.task,
-            title: todo1.title,
-            user: todo1.user
-        });
+        expect(body.todos).toHaveLength(1);
+        expect(body.todos[0].user).toBe(todo1.user);
 
     });
 
-    it('get - /api/todos/:id should return 400', async () => {
+    it('get - /api/todos/user should return 400 when user is missing', async () => {
 
         const { body } = await request(testServer.app)
-            .get('/api/todos/123')
+            .get('/api/todos/user')
             .expect(400);
 
         expect(body).toEqual({
-            error: 'Not valid ID'
+            error: 'User is required and must be a string'
         });
 
-    });
-
-    it('get  - /api/todos/:id should return 404', async () => {
-
-        const { body } = await request(testServer.app)
-            .get(`/api/todos/${fakeId}`)
-            .expect(404);
-
-        expect(body).toEqual({
-            error: `Todo with id ${fakeId} not found`
-        });
     });
 
     it('post - /api/todos should return 201', async () => {
@@ -171,6 +152,7 @@ describe('routes / todos', () => {
 
     it('put - /api/todos/:id should return 404', async () => {
 
+        const fakeId = 'a'.repeat(36);
         const { body } = await request(testServer.app)
             .put(`/api/todos/${fakeId}`)
             .send({ title: 'Updated todo' })
@@ -197,9 +179,12 @@ describe('routes / todos', () => {
             hasBeenEdited: false
         });
 
-        await request(testServer.app)
-            .get(`/api/todos/${todoID}`)
-            .expect(404);
+        const { body: remaining } = await request(testServer.app)
+            .get('/api/todos/user')
+            .query({ user: todo1.user })
+            .expect(200);
+
+        expect(remaining.todos).toHaveLength(0);
 
     });
 
@@ -215,6 +200,7 @@ describe('routes / todos', () => {
 
     it('delete - /api/todos/:id should return 404', async () => {
 
+        const fakeId = 'a'.repeat(36);
         const { body } = await request(testServer.app)
             .delete(`/api/todos/${fakeId}`)
             .expect(404);

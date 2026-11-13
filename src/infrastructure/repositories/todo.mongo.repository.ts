@@ -14,8 +14,8 @@ export class TodoMongoRepository implements TodoRepository {
         return this.todoDatasource.getTodos(dto);
     };
 
-    async getTodoById(id: string): Promise<TodoEntity> {
-        return this.todoDatasource.getTodoById(id);
+    async getTodosByUser(user: string): Promise<TodoEntity[]> {
+        return this.todoDatasource.getTodosByUser(user);
     };
 
     async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {

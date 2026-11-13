@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import type { TodoRepository } from "../../domain/repositories/todo.repository.js";
 import { CreateTodoDto, UpdateTodoDto } from "../../domain/dtos/index.js";
-import { CreateTodo, DeleteById, GetAll, GetById, UpdateTodoById } from "../../domain/use-cases/index.js";
+import { CreateTodo, DeleteById, GetAll, GetByUser, UpdateTodoById } from "../../domain/use-cases/index.js";
 import { CustomHTTPError } from "../../domain/errors/custom-http.error.js";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto.js";
 
@@ -61,16 +61,17 @@ export class TodoController {
 
     };
 
-    public readTodoById = (req: Request, res: Response) => {
-        const id = req.params.id;
+    public getTodosByUser = (req: Request, res: Response) => {
+        const user = req.params.user ?? req.query.user;
 
-        if (!this.isValidId(id)) return res.status(400).json({ error: 'Not valid ID' });
+        if (typeof user !== 'string' || !user.trim()) {
+            return res.status(400).json({ error: 'User is required and must be a string' });
+        }
 
-        new GetById(this.repository)
-            .execute(id)
-            .then(todo => res.status(200).json({ todo, message: 'Todo fetched successfully' }))
+        new GetByUser(this.repository)
+            .execute(user)
+            .then(todos => res.status(200).json({ todos, message: 'Todos fetched successfully' }))
             .catch(error => this.handleError(error, res));
-
     };
 
     public updateTodo = (req: Request, res: Response) => {

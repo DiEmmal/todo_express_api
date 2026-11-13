@@ -39,6 +39,6 @@ This command starts MongoDB using Docker Compose and runs the API in watch mode.
 ## Endpoints
 - `POST /api/todos`
 - `GET /api/todos`
-- `GET /api/todos/:id`
+- `GET /api/todos/user/:user`
 - `PUT /api/todos/:id`
 - `DELETE /api/todos/:id`

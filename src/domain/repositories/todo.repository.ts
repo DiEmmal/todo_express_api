@@ -6,7 +6,7 @@ import type { GetTodosResponse } from "../interfaces/get-todos-response.interfac
 export abstract class TodoRepository {
 
     abstract getTodos(dto: PaginationDto): Promise<GetTodosResponse>;
-    abstract getTodoById(id: string): Promise<TodoEntity>;
+    abstract getTodosByUser(user: string): Promise<TodoEntity[]>;
     abstract createTodo(dto: CreateTodoDto): Promise<TodoEntity>;
     abstract updateTodo(dto: UpdateTodoDto): Promise<TodoEntity>;
     abstract deleteTodoById(id: string): Promise<TodoEntity>;

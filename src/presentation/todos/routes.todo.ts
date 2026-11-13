@@ -17,7 +17,8 @@ export class TodoRoutes {
         router.post('/', todoController.createTodo);
         // Read
         router.get('/', todoController.getTodos);
-        router.get('/:id', todoController.readTodoById);
+        router.get('/user', todoController.getTodosByUser);
+        router.get('/user/:user', todoController.getTodosByUser);
         // Update
         router.put('/:id', todoController.updateTodo);
         // Delete
